@@ -8,9 +8,8 @@
   <title>IUT DE CORSE - AR</title>
 
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
 
-  <!-- AR.js NFT -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
   <style>
@@ -105,25 +104,28 @@
   </a-scene>
 
   <script>
-    const loader = document.getElementById("loader");
     const status = document.getElementById("status");
-    const scene = document.querySelector("a-scene");
+    const loader = document.getElementById("loader");
     const marker = document.querySelector("a-nft");
 
-    scene.addEventListener("loaded", () => {
-      loader.style.display = "none";
+    window.addEventListener("arjs-nft-loaded", () => {
+        status.textContent = "Marqueur NFT chargé - Présente la photo";
+        loader.style.display = "none";
+    });
+
+    window.addEventListener("camera-error", (event) => {
+        status.textContent = "Erreur caméra";
+        console.error(event);
     });
 
     marker.addEventListener("markerFound", () => {
-      status.textContent = "Photo détectée !";
-      console.log("Photo reconnue !");
+        status.textContent = "PHOTO DÉTECTÉE !";
     });
 
     marker.addEventListener("markerLost", () => {
-      status.textContent = "Photo non détectée";
-      console.log("Photo perdue !");
+        status.textContent = "Photo perdue";
     });
-  </script>
+</script>
 
 </body>
 </html>
