@@ -38,6 +38,19 @@
       z-index: 999;
     }
   </style>
+
+  <style>
+  #arjs-video {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
 </head>
 
 <body>
@@ -58,11 +71,13 @@
     <!-- RECONNAISSANCE DE LA PHOTO -->
     <a-nft
       type="nft"
-      url="assets/a"
+      url="assets/iut"
       smooth="true"
       smoothCount="10"
       smoothTolerance="0.01"
-      smoothThreshold="5">
+      smoothThreshold="5"
+      emitevents="true">
+    </a-nft>>
 
       <!-- Groupe graphique positionné sur la photo -->
       <a-entity
