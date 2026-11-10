@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>IUT DE CORSE - AR</title>
+
+  <!-- Bibliothèque A-Frame -->
+  <script src="https://aframe.io/releases/1.0.4/aframe.min.js">
+  </script>
+
+  <!-- Bibliothèque AR.js NFT -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js">
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial;
+      z-index: 999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Écran de chargement -->
+  <div class="loader" id="loader">
+    Chargement de la réalité augmentée...
+  </div>
+
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true;"
+    arjs="trackingMethod: best;
+          sourceType: webcam;
+          debugUIEnabled: false;">
+
+    <!-- RECONNAISSANCE DE LA PHOTO -->
+    <a-nft
+      type="nft"
+      url="assets/a"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01"
+      smoothThreshold="5">
+
+      <!-- Groupe graphique positionné sur la photo -->
+      <a-entity
+        id="remplacement"
+        position="200 300 0"
+        rotation="-90 0 0">
+
+        <!-- MASQUE BLANC -->
+        <a-plane
+          position="0 0 0"
+          width="250"
+          height="55"
+          color="#FFFFFF"
+          material="side: double">
+        </a-plane>
+
+        <!-- NOUVEAU TEXTE -->
+        <a-text
+          value="IUT DE CORSE"
+          position="0 0 0.5"
+          color="#15558A"
+          align="center"
+          anchor="center"
+          width="250"
+          scale="1 1 1">
+        </a-text>
+
+      </a-entity>
+
+    </a-nft>
+
+    <!-- CAMÉRA DU SMARTPHONE -->
+    <a-entity camera></a-entity>
+
+  </a-scene>
+
+  <script>
+    const loader = document.getElementById("loader");
+    const marker = document.querySelector("a-nft");
+
+    // Lorsque la scène est chargée
+    document.querySelector("a-scene")
+      .addEventListener("loaded", () => {
+        loader.style.display = "none";
+      });
+
+    // Lorsque la photo est reconnue
+    marker.addEventListener("markerFound", () => {
+      console.log("Photo reconnue !");
+    });
+
+    // Lorsque la photo n'est plus visible
+    marker.addEventListener("markerLost", () => {
+      console.log("Photo perdue !");
+    });
+  </script>
+
+</body>
+</html>
