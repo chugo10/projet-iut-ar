@@ -5,131 +5,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IUT DE CORSE - AR</title>
+
+  <title>IUT DE CORSE - Réalité augmentée</title>
 
   <!-- A-Frame -->
   <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
 
+  <!-- AR.js avec reconnaissance d'image NFT -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-    }
-
-    .loader {
-      position: fixed;
-      inset: 0;
-      background: black;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: Arial, sans-serif;
-      z-index: 999;
     }
 
     #status {
       position: fixed;
       bottom: 15px;
       left: 10px;
-      z-index: 1000;
+      z-index: 10000;
+      padding: 10px 14px;
       color: white;
-      background: rgba(0,0,0,0.7);
-      padding: 10px;
-      font-family: Arial, sans-serif;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 8px;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="loader" id="loader">
-    Chargement de la réalité augmentée...
-  </div>
-
-  <div id="status">Recherche de la photo...</div>
+  <!-- Message de suivi -->
+  <div id="status">Initialisation de la caméra...</div>
 
   <a-scene
     embedded
     vr-mode-ui="enabled: false"
-    renderer="logarithmicDepthBuffer: true;"
-    arjs="trackingMethod: best;
-          sourceType: webcam;
-          debugUIEnabled: true;">
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="
+      trackingMethod: best;
+      sourceType: webcam;
+      debugUIEnabled: false;
+    "
+  >
 
+    <!-- Image du nouveau panneau -->
     <a-assets>
-        <img id="nouveau-panneau" src="assets/panneau.png">
+      <img
+        id="nouveau-panneau"
+        src="assets/panneau.svg"
+        crossorigin="anonymous"
+      >
     </a-assets>
 
-    <!-- MARQUEUR NFT -->
+    <!-- Reconnaissance de la photo -->
     <a-nft
+      id="marqueur"
       type="nft"
       url="assets/iut"
       smooth="true"
       smoothCount="10"
       smoothTolerance="0.01"
       smoothThreshold="5"
-      emitevents="true">
+      emitevents="true"
+    >
 
-      <!-- CONTENU QUI APPARAÎT SUR LA PHOTO -->
+      <!-- Image qui remplace l'ancien panneau -->
       <a-entity
         id="remplacement"
         position="50 150 0"
-        rotation="-90 0 0">
+        rotation="-90 0 0"
+      >
 
-        <!-- Masque blanc -->
         <a-plane
-          position="0 0 0"
+          src="#nouveau-panneau"
           width="250"
           height="55"
-          color="#FFFFFF"
-          material="side: double">
+          material="
+            shader: flat;
+            transparent: false;
+            side: double;
+          "
+        >
         </a-plane>
-
-        <!-- Nouveau texte -->
-        <a-text
-          value="IUT DE CORSE"
-          position="0 0 0.5"
-          color="#15558A"
-          align="center"
-          anchor="center"
-          width="250">
-        </a-text>
 
       </a-entity>
 
     </a-nft>
 
-    <!-- CAMÉRA -->
+    <!-- Caméra -->
     <a-entity camera></a-entity>
 
   </a-scene>
 
   <script>
-    const status = document.getElementById("status");
-    const loader = document.getElementById("loader");
-    const marker = document.querySelector("a-nft");
+    const marker = document.querySelector("#marqueur");
+    const status = document.querySelector("#status");
+    const image = document.querySelector("#nouveau-panneau");
 
-    window.addEventListener("arjs-nft-loaded", () => {
-        status.textContent = "Marqueur NFT chargé - Présente la photo";
-        loader.style.display = "none";
+    image.addEventListener("load", () => {
+      console.log("Image du panneau chargée");
     });
 
-    window.addEventListener("camera-error", (event) => {
-        status.textContent = "Erreur caméra";
-        console.error(event);
+    image.addEventListener("error", () => {
+      status.textContent = "Erreur : image du panneau introuvable";
     });
 
     marker.addEventListener("markerFound", () => {
-        status.textContent = "PHOTO DÉTECTÉE !";
+      status.textContent = "Photo détectée !";
+      console.log("Marqueur NFT reconnu");
     });
 
     marker.addEventListener("markerLost", () => {
-        status.textContent = "Photo perdue";
+      status.textContent = "Photo non détectée";
+      console.log("Marqueur NFT perdu");
     });
-</script>
+
+    window.addEventListener("camera-error", (event) => {
+      status.textContent = "Erreur de caméra";
+      console.error(event);
+    });
+  </script>
 
 </body>
 </html>
